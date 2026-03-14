@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la \"C:/Python\"*)",
+      "Bash(C:/Python313/python.exe --version)",
+      "Bash(\"C:/Program Files/nodejs/node.exe\" --version)",
+      "Bash(\"C:/Program Files/nodejs/npm.cmd\" --version)",
+      "Bash(C:/Python313/python.exe -m pip install Pillow --quiet)",
+      "Bash(C:/Python313/python.exe -m pip show Pillow)",
+      "Bash(C:/Python313/python.exe -m pip install Pillow)",
+      "Bash(C:/Python313/python.exe generate_tiktok.py)"
+    ]
+  }
+}
