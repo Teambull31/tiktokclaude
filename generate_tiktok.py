@@ -14,6 +14,11 @@ FONT_IMPACT = "C:/Windows/Fonts/impact.ttf"
 FONT_BOLD   = "C:/Windows/Fonts/arialbd.ttf"
 FONT_REG    = "C:/Windows/Fonts/arial.ttf"
 
+# Linux fallback fonts
+_FONT_IMPACT_LINUX = "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf"
+_FONT_BOLD_LINUX   = "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf"
+_FONT_REG_LINUX    = "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf"
+
 # ─── Data ─────────────────────────────────────────────────────────────────────
 
 SCRIPTS = [
@@ -289,13 +294,20 @@ def gradient_img(c1, c2, w=W, h=H):
 
 
 def load_font(path, size):
-    try:
-        return ImageFont.truetype(path, size)
-    except Exception:
-        try:
-            return ImageFont.truetype(FONT_BOLD, size)
-        except Exception:
-            return ImageFont.load_default()
+    # Map Windows paths to their Linux equivalents
+    linux_map = {
+        FONT_IMPACT: _FONT_IMPACT_LINUX,
+        FONT_BOLD:   _FONT_BOLD_LINUX,
+        FONT_REG:    _FONT_REG_LINUX,
+    }
+    candidates = [path, linux_map.get(path), _FONT_BOLD_LINUX, _FONT_REG_LINUX]
+    for p in candidates:
+        if p:
+            try:
+                return ImageFont.truetype(p, size)
+            except Exception:
+                continue
+    return ImageFont.load_default()
 
 
 def measure_text(draw, text, font):
