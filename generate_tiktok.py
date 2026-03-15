@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """
 Generateur d'images TikTok
-10 scripts x 5 slides = 50 images PNG (1080x1920)
+- Categorie PSY  : 10 scripts x 5 slides = 50 images PNG (1080x1920)
+- Categorie DEV  :  3 scripts x 8 slides = 24 images PNG (1080x1920)
+  (format long pour audio NotebookLM ~4 min)
 """
 
 import os
@@ -13,6 +15,7 @@ OUTPUT_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "output")
 FONT_IMPACT = "C:/Windows/Fonts/impact.ttf"
 FONT_BOLD   = "C:/Windows/Fonts/arialbd.ttf"
 FONT_REG    = "C:/Windows/Fonts/arial.ttf"
+FONT_MONO   = "C:/Windows/Fonts/cour.ttf"
 
 # ─── Data ─────────────────────────────────────────────────────────────────────
 
@@ -266,6 +269,78 @@ SCRIPTS = [
         ],
         "cta": "Like si t'es d'accord.\nPartage pour reveiller\nl'algorithme.",
         "hashtags": "#Amour2026  #TendancesCouple  #PsychoModerne",
+    },
+]
+
+# ─── Dev Scripts (NotebookLM audio ~4 min → 8 slides) ────────────────────────
+# Structure : Hook → Intro → 5 Chapitres → CTA
+
+DEV_SCRIPTS = [
+    {
+        "num": 1,
+        "folder": "dev_01_clean_code",
+        "icon": "</>",
+        "colors": ("#0D1117", "#58A6FF"),
+        "title": "CLEAN CODE\nLES 5 VRAIES REGLES",
+        "hook": "95% des devs pensent\ncoder propre.\nVoici les 5 regles\nque personne n'applique vraiment.",
+        "intro": (
+            "Pourquoi le clean code ?",
+            "Un code propre n'est pas\nun luxe. C'est ce qui separe\nun code jetable\nd'un code maintenable.",
+        ),
+        "label": "REGLE",
+        "chapters": [
+            ("Nommer avec intention",    "Une variable 'd'\nvaut zero.\n'daysSinceLastDeploy'\ndit tout, seule."),
+            ("1 fonction = 1 action",    "Si ta fonction fait\n2 choses, c'est 2 fonctions.\nPas de 'and' dans le nom."),
+            ("Commentaires = echecs",    "Un bon code se lit\nsans commentaire.\nCommente le 'pourquoi',\njamais le 'quoi'."),
+            ("DRY sans pitie",           "Don't Repeat Yourself.\nSi tu copies-colles,\ntu crees de la dette\ntechnique."),
+            ("Principe surprise zero",   "Ton code doit faire\nexactement ce que\nson nom promet.\nRien de plus."),
+        ],
+        "cta": "Sauvegarde pour\nton prochain code review.\nTag un collegue\nqui commente trop.",
+        "hashtags": "#CleanCode  #DevTips  #Programmation",
+    },
+    {
+        "num": 2,
+        "folder": "dev_02_docker",
+        "icon": "[]",
+        "colors": ("#0D1B2E", "#2496ED"),
+        "title": "DOCKER\nEXPLIQUE EN 5 POINTS",
+        "hook": "T'as jamais compris\nDocker vraiment ?\nApres ca, impossible\nde l'oublier.",
+        "intro": (
+            "Pourquoi Docker existe ?",
+            "'Ca marche sur ma machine.'\nDocker tue cette phrase\npour toujours.\nVoici comment.",
+        ),
+        "label": "CONCEPT",
+        "chapters": [
+            ("Image vs Container",   "Une image = une recette.\nUn container = le plat servi.\nTu peux faire\n1000 plats d'une recette."),
+            ("Dockerfile",           "Un fichier texte qui\ndecrit ton environnement.\nReproductible. Versionne.\nParfait."),
+            ("Volumes",              "Les donnees survivent\nau container.\nSans volume,\ntout disparait a l'arret."),
+            ("Docker Compose",       "Plusieurs containers\nqui travaillent ensemble.\nUn seul fichier YAML\npour tout piloter."),
+            ("build & run",          "'docker build -t app .'\npuis 'docker run app'.\nTon app tourne partout.\nFin du probleme."),
+        ],
+        "cta": "Sauvegarde et\nfais ton premier Dockerfile.\nCommente ton use case.",
+        "hashtags": "#Docker  #DevOps  #Containers  #DevTips",
+    },
+    {
+        "num": 3,
+        "folder": "dev_03_typescript",
+        "icon": "TS",
+        "colors": ("#0A1628", "#3178C6"),
+        "title": "TYPESCRIPT\n5 TYPES QUI\nCHANGENT TOUT",
+        "hook": "Tu codes encore\nen JS pur ?\nCes 5 types TypeScript\nvont te manquer.",
+        "intro": (
+            "Pourquoi TypeScript ?",
+            "JavaScript sans types\nc'est conduire la nuit\nsans phares. Rapide.\nJusqu'au crash.",
+        ),
+        "label": "TYPE",
+        "chapters": [
+            ("Union Types",          "'string | number' dit\nexactement ce qu'accepte\nta fonction.\nPlus de surprises runtime."),
+            ("Optional Chaining ?.", "'user?.profile?.avatar'\nau lieu de 3 if imbriques.\nLe code respire enfin."),
+            ("Readonly",             "Immutabilite forcee.\nTS hurle avant\nque le bug arrive.\nPas apres."),
+            ("Generics <T>",         "Une fonction pour\ntous les types.\nSans perdre la securite.\nC'est la magie."),
+            ("Utility Types",        "Partial, Pick, Omit...\nTransformer un type\nen 1 ligne.\nSans dupliquer."),
+        ],
+        "cta": "Sauvegarde pour\nta migration JS vers TS.\nCommente ton type prefere.",
+        "hashtags": "#TypeScript  #JavaScript  #DevTips  #WebDev",
     },
 ]
 
@@ -531,12 +606,248 @@ def slide_cta(s):
     return img
 
 
+# ─── DEV Slide 1: Hook ────────────────────────────────────────────────────────
+
+def slide_dev_hook(s):
+    """Hook slide for dev content (1/8)."""
+    c1 = rgb(s["colors"][0])
+    c2 = rgb(s["colors"][1])
+    img = gradient_img(c1, c2)
+    draw = ImageDraw.Draw(img)
+
+    # Decorative blobs
+    dc = lighten(blend(c1, c2, 0.15), 0.12)
+    draw.ellipse([(-100, -100), (400, 400)], fill=dc)
+    draw.ellipse([(750, 1650), (1250, 2100)], fill=darken(c2, 0.25))
+
+    # "DEV #XX" pill
+    f_tag = load_font(FONT_BOLD, 38)
+    draw_pill(draw, f"DEV  #{s['num']:02d}", W // 2, 100,
+              font=f_tag, bg=c2, fg=(255, 255, 255))
+
+    # NotebookLM badge
+    f_badge = load_font(FONT_REG, 30)
+    badge_text = "audio: NotebookLM  •  ~4 min"
+    bw, _ = measure_text(draw, badge_text, f_badge)
+    draw.text((W // 2 - bw // 2, 196), badge_text,
+              font=f_badge, fill=lighten(c2, 0.45))
+
+    # Title
+    f_title = load_font(FONT_IMPACT, 78)
+    y = 280
+    y = draw_text_block(draw, s["title"], W // 2, y, f_title, (255, 255, 255), shadow=True)
+
+    # Divider
+    y += 30
+    draw_divider(draw, y, color=c2, width=4)
+    y += 50
+
+    # Hook text
+    f_hook = load_font(FONT_BOLD, 60)
+    y = draw_text_block(draw, s["hook"], W // 2, y, f_hook, (210, 230, 255), shadow=True)
+
+    # Big icon
+    y = max(y + 60, H - 440)
+    f_icon = load_font(FONT_IMPACT, 200)
+    icon_color = lighten(c2, 0.25)
+    iw, _ = measure_text(draw, s["icon"], f_icon)
+    draw.text((W // 2 - iw // 2 + 4, y + 4), s["icon"], font=f_icon, fill=(0, 0, 0))
+    draw.text((W // 2 - iw // 2, y), s["icon"], font=f_icon, fill=icon_color)
+
+    # Bottom bar
+    bar_top = H - 110
+    draw.rectangle([(0, bar_top), (W, H)], fill=darken(c2, 0.65))
+    f_bar = load_font(FONT_BOLD, 38)
+    bar_text = "8 slides  |  audio ~4 min"
+    bw, bh = measure_text(draw, bar_text, f_bar)
+    draw.text((W // 2 - bw // 2, bar_top + (110 - bh) // 2), bar_text,
+              font=f_bar, fill=(190, 215, 255))
+
+    return img
+
+
+# ─── DEV Slide 2: Intro / Context ─────────────────────────────────────────────
+
+def slide_dev_intro(s):
+    """Context/intro slide (2/8)."""
+    c1 = rgb(s["colors"][0])
+    c2 = rgb(s["colors"][1])
+    img = gradient_img(darken(c1, 0.05), darken(c2, 0.45))
+    draw = ImageDraw.Draw(img)
+
+    title, body = s["intro"]
+
+    # Decorative background word
+    f_bg = load_font(FONT_IMPACT, 380)
+    bg_str = "WHY"
+    bgw, bgh = measure_text(draw, bg_str, f_bg)
+    bg_col = lighten(blend(c1, c2, 0.5), 0.09)
+    draw.text((W // 2 - bgw // 2, H // 2 - bgh // 2 - 60), bg_str, font=f_bg, fill=bg_col)
+
+    # "CONTEXTE" pill
+    f_label = load_font(FONT_BOLD, 44)
+    y_after_pill = draw_pill(draw, "CONTEXTE", W // 2, 160, f_label,
+                             bg=c2, fg=(255, 255, 255))
+
+    # Intro title
+    f_title = load_font(FONT_IMPACT, 72)
+    y = y_after_pill + 50
+    y = draw_text_block(draw, title, W // 2, y, f_title, (255, 255, 255), shadow=True)
+
+    # Divider
+    y += 30
+    draw_divider(draw, y, color=lighten(c2, 0.4), width=3)
+    y += 45
+
+    # Body text
+    f_body = load_font(FONT_BOLD, 56)
+    y = draw_text_block(draw, body, W // 2, y, f_body, (210, 230, 255), shadow=True)
+
+    # Bottom bar
+    bar_top = H - 110
+    draw.rectangle([(0, bar_top), (W, H)], fill=darken(c2, 0.65))
+    f_prog = load_font(FONT_BOLD, 36)
+    prog_str = "INTRO  |  Slide 2 / 8"
+    pw, ph = measure_text(draw, prog_str, f_prog)
+    draw.text((W // 2 - pw // 2, bar_top + (110 - ph) // 2), prog_str,
+              font=f_prog, fill=(180, 210, 255))
+
+    return img
+
+
+# ─── DEV Slides 3-7: Chapters ─────────────────────────────────────────────────
+
+def slide_dev_chapter(s, idx):
+    """Chapter slide (slides 3-7 / 8)."""
+    c1 = rgb(s["colors"][0])
+    c2 = rgb(s["colors"][1])
+    if idx % 2 == 0:
+        img = gradient_img(darken(c1, 0.0), darken(c2, 0.45))
+    else:
+        img = gradient_img(darken(c2, 0.5), darken(c1, 0.05))
+    draw = ImageDraw.Draw(img)
+
+    num = idx + 1
+    title, desc = s["chapters"][idx]
+
+    # Huge background number (decorative)
+    f_bg_num = load_font(FONT_IMPACT, 570)
+    bg_num_str = str(num)
+    bnw, bnh = measure_text(draw, bg_num_str, f_bg_num)
+    bg_num_col = lighten(blend(c1, c2, 0.4), 0.10)
+    draw.text((W // 2 - bnw // 2, H // 2 - bnh // 2 - 60),
+              bg_num_str, font=f_bg_num, fill=bg_num_col)
+
+    # Label pill (e.g. "REGLE 3")
+    f_label = load_font(FONT_BOLD, 44)
+    label_text = f"{s['label']}  {num}"
+    y_after_pill = draw_pill(draw, label_text, W // 2, 160, f_label,
+                             bg=lighten(c2, 0.10), fg=(255, 255, 255))
+
+    # Chapter title
+    f_title = load_font(FONT_IMPACT, 74)
+    y = y_after_pill + 50
+    y = draw_text_block(draw, title, W // 2, y, f_title, (255, 255, 255), shadow=True)
+
+    # Divider
+    y += 30
+    draw_divider(draw, y, color=lighten(c2, 0.3), width=3)
+    y += 45
+
+    # Description
+    f_desc = load_font(FONT_BOLD, 54)
+    y = draw_text_block(draw, desc, W // 2, y, f_desc, (210, 230, 255), shadow=True)
+
+    # Progress bar: ●●●○○  CHAPITRE 3/5  |  Slide 5/8
+    bar_top = H - 110
+    draw.rectangle([(0, bar_top), (W, H)], fill=darken(c2, 0.65))
+    f_prog = load_font(FONT_BOLD, 36)
+    filled = chr(9679)  # ●
+    empty  = chr(9675)  # ○
+    slide_num = idx + 3  # chapters start at slide 3
+    prog_str = (filled * num) + (empty * (5 - num)) + f"   Slide {slide_num} / 8"
+    pw, ph = measure_text(draw, prog_str, f_prog)
+    draw.text((W // 2 - pw // 2, bar_top + (110 - ph) // 2),
+              prog_str, font=f_prog, fill=(180, 210, 255))
+
+    return img
+
+
+# ─── DEV Slide 8: CTA ─────────────────────────────────────────────────────────
+
+def slide_dev_cta(s):
+    """CTA slide (8/8)."""
+    c1 = rgb(s["colors"][1])  # reversed
+    c2 = rgb(s["colors"][0])
+    img = gradient_img(c1, c2)
+    draw = ImageDraw.Draw(img)
+
+    # Decorative blobs
+    dc = lighten(blend(c1, c2, 0.4), 0.15)
+    draw.ellipse([(-150, 200), (500, 800)], fill=dc)
+    draw.ellipse([(700, 1200), (1350, 1850)], fill=darken(c2, 0.2))
+
+    # Header
+    f_head = load_font(FONT_IMPACT, 88)
+    y = 140
+    y = draw_text_block(draw, "CA T'A\nAIDE ?", W // 2, y, f_head,
+                        (255, 255, 255), shadow=True)
+
+    # Divider
+    y += 35
+    draw_divider(draw, y, color=lighten(c1, 0.4), width=4)
+    y += 55
+
+    # CTA text
+    f_cta = load_font(FONT_BOLD, 56)
+    y = draw_text_block(draw, s["cta"], W // 2, y, f_cta, (220, 235, 255), shadow=True)
+
+    y += 70
+
+    # Action buttons
+    actions = ["LIKE", "COMMENTE", "SAUVEGARDE"]
+    btn_w = 280
+    btn_h = 110
+    gap = 30
+    total_w = len(actions) * btn_w + (len(actions) - 1) * gap
+    bx = (W - total_w) // 2
+
+    for action in actions:
+        btn_bg = lighten(c1, 0.20)
+        draw.rounded_rectangle([(bx, y), (bx + btn_w, y + btn_h)],
+                                radius=22, fill=btn_bg)
+        f_btn = load_font(FONT_BOLD, 38)
+        tw, th = measure_text(draw, action, f_btn)
+        draw.text((bx + (btn_w - tw) // 2, y + (btn_h - th) // 2),
+                  action, font=f_btn, fill=(255, 255, 255))
+        bx += btn_w + gap
+
+    y += btn_h + 60
+
+    # Hashtags
+    f_hash = load_font(FONT_REG, 36)
+    hash_col = lighten(blend(c1, (255, 255, 255), 0.3), 0.40)
+    y = draw_text_block(draw, s["hashtags"], W // 2, y, f_hash,
+                        hash_col, shadow=False)
+
+    # Follow CTA
+    f_follow = load_font(FONT_BOLD, 36)
+    follow_text = "Suis pour plus de contenu dev"
+    fw, _ = measure_text(draw, follow_text, f_follow)
+    draw.text((W // 2 - fw // 2, H - 100), follow_text,
+              font=f_follow, fill=(180, 210, 255))
+
+    return img
+
+
 # ─── Main ──────────────────────────────────────────────────────────────────────
 
 def main():
     os.makedirs(OUTPUT_DIR, exist_ok=True)
     total = 0
 
+    # ── PSY scripts (5 slides each) ───────────────────────────────────────────
+    print("── PSY CONTENT ──")
     for s in SCRIPTS:
         folder = os.path.join(OUTPUT_DIR, s["folder"])
         os.makedirs(folder, exist_ok=True)
@@ -551,6 +862,24 @@ def main():
 
         total += 5
         print(f"         5 slides saved OK")
+
+    # ── DEV scripts (8 slides each, pour audio NotebookLM ~4 min) ────────────
+    print("\n── DEV CONTENT (NotebookLM ~4 min) ──")
+    for s in DEV_SCRIPTS:
+        folder = os.path.join(OUTPUT_DIR, s["folder"])
+        os.makedirs(folder, exist_ok=True)
+        print(f"  [DEV {s['num']:02d}] {s['folder']}")
+
+        slide_dev_hook(s).save(os.path.join(folder, "slide_01_hook.png"), "PNG")
+        slide_dev_intro(s).save(os.path.join(folder, "slide_02_intro.png"), "PNG")
+        for i in range(5):
+            slide_dev_chapter(s, i).save(
+                os.path.join(folder, f"slide_0{i + 3}_chapter{i + 1}.png"), "PNG"
+            )
+        slide_dev_cta(s).save(os.path.join(folder, "slide_08_cta.png"), "PNG")
+
+        total += 8
+        print(f"         8 slides saved OK")
 
     print(f"\nDone! {total} images in '{OUTPUT_DIR}/'")
 
