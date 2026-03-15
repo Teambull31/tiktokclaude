@@ -14,6 +14,11 @@ FONT_IMPACT = "C:/Windows/Fonts/impact.ttf"
 FONT_BOLD   = "C:/Windows/Fonts/arialbd.ttf"
 FONT_REG    = "C:/Windows/Fonts/arial.ttf"
 
+# Linux fallback fonts
+_FONT_IMPACT_LINUX = "/usr/share/fonts/truetype/freefont/FreeSansBold.ttf"
+_FONT_BOLD_LINUX   = "/usr/share/fonts/truetype/liberation/LiberationSans-Bold.ttf"
+_FONT_REG_LINUX    = "/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf"
+
 # ─── Data ─────────────────────────────────────────────────────────────────────
 
 SCRIPTS = [
@@ -289,13 +294,20 @@ def gradient_img(c1, c2, w=W, h=H):
 
 
 def load_font(path, size):
-    try:
-        return ImageFont.truetype(path, size)
-    except Exception:
-        try:
-            return ImageFont.truetype(FONT_BOLD, size)
-        except Exception:
-            return ImageFont.load_default()
+    # Map Windows paths to their Linux equivalents
+    linux_map = {
+        FONT_IMPACT: _FONT_IMPACT_LINUX,
+        FONT_BOLD:   _FONT_BOLD_LINUX,
+        FONT_REG:    _FONT_REG_LINUX,
+    }
+    candidates = [path, linux_map.get(path), _FONT_BOLD_LINUX, _FONT_REG_LINUX]
+    for p in candidates:
+        if p:
+            try:
+                return ImageFont.truetype(p, size)
+            except Exception:
+                continue
+    return ImageFont.load_default()
 
 
 def measure_text(draw, text, font):
@@ -365,16 +377,9 @@ def slide_hook(s):
     draw.ellipse([(750, 1650), (1250, 2100)], fill=darken(c2, 0.2))
     draw.ellipse([(820, 80), (1150, 410)], fill=lighten(c2, 0.12))
 
-    # Script tag pill
-    f_tag = load_font(FONT_BOLD, 38)
-    tag_text = f"SCRIPT {s['num']:02d} / 10"
-    draw_pill(draw, tag_text, W // 2, 110,
-              font=f_tag, bg=(255, 255, 255, 220) if False else (255, 255, 255),
-              fg=darken(c1, 0.1))
-
     # Title
     f_title = load_font(FONT_IMPACT, 82)
-    y = 230
+    y = 160
     y = draw_text_block(draw, s["title"], W // 2, y, f_title, (255, 255, 255), shadow=True)
 
     # Divider
@@ -393,16 +398,6 @@ def slide_hook(s):
     iw, ih = measure_text(draw, s["icon"], f_icon)
     draw.text((W // 2 - iw // 2 + 4, y + 4), s["icon"], font=f_icon, fill=(0, 0, 0))
     draw.text((W // 2 - iw // 2, y), s["icon"], font=f_icon, fill=icon_color)
-
-    # Bottom bar
-    bar_top = H - 120
-    bar_col = darken(c2, 0.4)
-    draw.rectangle([(0, bar_top), (W, H)], fill=bar_col)
-    f_bar = load_font(FONT_BOLD, 40)
-    bar_text = "Like  |  Commente  |  Sauvegarde"
-    bw, bh = measure_text(draw, bar_text, f_bar)
-    draw.text((W // 2 - bw // 2, bar_top + (120 - bh) // 2), bar_text,
-              font=f_bar, fill=(255, 255, 255))
 
     return img
 
@@ -495,26 +490,6 @@ def slide_cta(s):
 
     y += 70
 
-    # Action buttons
-    actions = ["LIKE", "COMMENTE", "SAUVEGARDE"]
-    btn_w = 280
-    btn_h = 110
-    gap = 30
-    total_w = len(actions) * btn_w + (len(actions) - 1) * gap
-    bx = (W - total_w) // 2
-
-    for action in actions:
-        btn_bg = lighten(blend(c1, c2, 0.5), 0.25)
-        draw.rounded_rectangle([(bx, y), (bx + btn_w, y + btn_h)],
-                                radius=22, fill=btn_bg)
-        f_btn = load_font(FONT_BOLD, 38)
-        tw, th = measure_text(draw, action, f_btn)
-        draw.text((bx + (btn_w - tw) // 2, y + (btn_h - th) // 2),
-                  action, font=f_btn, fill=(255, 255, 255))
-        bx += btn_w + gap
-
-    y += btn_h + 60
-
     # Hashtags
     f_hash = load_font(FONT_REG, 38)
     hash_col = lighten(blend(c1, c2, 0.3), 0.45)
@@ -522,11 +497,11 @@ def slide_cta(s):
                         hash_col, shadow=False)
 
     # Follow CTA
-    f_follow = load_font(FONT_BOLD, 36)
-    follow_text = "Suis pour plus de contenu psy"
+    f_follow = load_font(FONT_BOLD, 46)
+    follow_text = "si tu aimes ce contenu abonne toi :)"
     fw, _ = measure_text(draw, follow_text, f_follow)
-    draw.text((W // 2 - fw // 2, H - 100), follow_text,
-              font=f_follow, fill=(210, 210, 210))
+    draw.text((W // 2 - fw // 2, H - 110), follow_text,
+              font=f_follow, fill=(255, 255, 255))
 
     return img
 
